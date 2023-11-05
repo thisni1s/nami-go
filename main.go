@@ -3,30 +3,22 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
 	"os"
+    "github.com/thisni1s/nami-go/types"
 )
 
 type Config struct {
-	Username string
-	Password string
+	Username    string
+	Password    string
 	Gruppierung string
 }
 
-type SearchAnswer struct {
-	sucess bool
-	responseType string 
-	message string 
-	title string 
-	data struct {
-		id int
-		vorname string
-		nachname string
-	}
-}
+
 
 func errchck(err *error) {
 	if *err != nil {
@@ -38,17 +30,16 @@ func main() {
 	conf, err := os.ReadFile("./config.json")
 	errchck(&err)
 
-	var cnf Config 
+	var cnf Config
 	err = json.Unmarshal(conf, &cnf)
 	errchck(&err)
 
 	jar, _ := cookiejar.New(nil)
 	data := url.Values{
-		"Login": {"API"},
+		"Login":    {"API"},
 		"username": {cnf.Username},
 		"password": {cnf.Password},
 	}
-
 
 	client := &http.Client{
 		Jar: jar,
@@ -73,15 +64,19 @@ func main() {
 	resp, err = client.Do(r)
 	errchck(&err)
 
-	defer resp.Body.Close() 
+	defer resp.Body.Close()
 
-	//var sa SearchAnswer
-	res2 := make(map[string]interface{})
-	json.NewDecoder(resp.Body).Decode(&res2)
-	
-	for k, v := range res2 {
-		fmt.Println(k, v)
-	}
+	jason, err := io.ReadAll(resp.Body)
+
+	var sa types.SearchAnswer
+	err = json.Unmarshal(jason, &sa)
+	errchck(&err)
+
+	//res2 := make(map[string]interface{})
+	//a := json.NewDecoder(resp.Body).Decode(&sa)
+
+	fmt.Println(sa.Success)
+	fmt.Println(sa.Data.Vorname, sa.Data.Nachname)
 
 	//fmt.Println(res2.data.id)
 	//fmt.Println(res2.data.vorname)
