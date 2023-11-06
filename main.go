@@ -3,83 +3,93 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
 	"os"
-    "github.com/thisni1s/nami-go/types"
+	"github.com/thisni1s/nami-go/types"
 )
-
-type Config struct {
-	Username    string
-	Password    string
-	Gruppierung string
-}
-
 
 
 func errchck(err *error) {
 	if *err != nil {
-		log.Fatal(err)
+		log.Fatal(*err)
 	}
+}
+
+var jar *cookiejar.Jar
+var client *http.Client
+
+func login(username string, password string) error {
+    jar, _ = cookiejar.New(nil)
+    client = &http.Client{
+        Jar: jar,
+    }
+    data := url.Values{
+        "Login": {"API"},
+        "username": {username},
+        "password": {password},
+    }
+    response, error := client.PostForm(types.LOGIN_URL, data)
+    if error != nil {
+        return error
+    }
+    defer response.Body.Close()
+    return nil
+}
+
+func getMemberDetails(userid string, groupid string) (types.SearchMemberAnswer, error) {
+    var answer types.SearchMemberAnswer
+    response, error := client.Get(types.FillMemberUrl(userid, groupid))
+    if error != nil {
+        return answer, error
+    }
+    defer response.Body.Close()
+    error = json.NewDecoder(response.Body).Decode(&answer)
+    return answer, nil
+}
+
+func search(searchValues types.SearchValues) (types.SearchAnswer, error) {
+    var answer types.SearchAnswer
+    request, error := http.NewRequest("GET", types.SEARCH_URL, nil)
+    params, error := json.Marshal(searchValues)
+    if error != nil {
+        return answer, error
+    }
+    request.URL.RawQuery = url.Values{
+        "searchedValues": {string(params)},
+        "page": {"1"},
+        "start": {"0"},
+        "limit": {"999999"},
+    }.Encode()
+    response, error := client.Do(request)
+    if error != nil {
+        return answer, error
+    }
+    error = json.NewDecoder(response.Body).Decode(&answer)
+    return answer, error
 }
 
 func main() {
 	conf, err := os.ReadFile("./config.json")
 	errchck(&err)
 
-	var cnf Config
+	var cnf types.Config
 	err = json.Unmarshal(conf, &cnf)
 	errchck(&err)
 
-	jar, _ := cookiejar.New(nil)
-	data := url.Values{
-		"Login":    {"API"},
-		"username": {cnf.Username},
-		"password": {cnf.Password},
-	}
+    err = login(cnf.Username, cnf.Password)
 
-	client := &http.Client{
-		Jar: jar,
-	}
-	url := "https://nami.dpsg.de/ica/rest/nami/auth/manual/sessionStartup"
+    memlist, err := search(types.SearchValues{
+        UntergliederungID: types.UG_ROVER,
+        MglTypeID: types.MITGLIED,
+        MglStatusID: types.AKTIV,
+    })
+    errchck(&err)
+    for _, member := range memlist.Members {
+        fmt.Println(member.Vorname, member.Nachname)
+    }
 
-	resp, err := client.PostForm(url, data)
-
-	errchck(&err)
-
-	defer resp.Body.Close()
-
-	res := make(map[string]string)
-	json.NewDecoder(resp.Body).Decode(&res)
-
-	url2 := fmt.Sprintf("https://nami.dpsg.de/ica/rest/nami/mitglied/filtered-for-navigation/gruppierung/gruppierung/%s/%s", "350161", "182574")
-
-	r, err := http.NewRequest("GET", url2, nil)
-	for _, c := range resp.Cookies() {
-		r.AddCookie(c)
-	}
-	resp, err = client.Do(r)
-	errchck(&err)
-
-	defer resp.Body.Close()
-
-	jason, err := io.ReadAll(resp.Body)
-
-	var sa types.SearchAnswer
-	err = json.Unmarshal(jason, &sa)
-	errchck(&err)
-
-	//res2 := make(map[string]interface{})
-	//a := json.NewDecoder(resp.Body).Decode(&sa)
-
-	fmt.Println(sa.Success)
-	fmt.Println(sa.Data.Vorname, sa.Data.Nachname)
-
-	//fmt.Println(res2.data.id)
-	//fmt.Println(res2.data.vorname)
-	//fmt.Println(res2.data.nachname)
 
 }

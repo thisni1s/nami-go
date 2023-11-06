@@ -11,6 +11,7 @@
 # Configs
 config.json
 *.json
+*.kate-swp
 
 # Test binary, built with `go test -c`
 *.test
