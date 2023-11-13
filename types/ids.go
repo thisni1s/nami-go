@@ -89,4 +89,4 @@ type Geschlecht struct {
 var GeschlechtDivers Geschlecht = Geschlecht{Name: "divers", ID: 24}
 var GeschlechtKeinAngabe Geschlecht = Geschlecht{Name: "keine Angabe", ID: 23}
 var GeschlechtMännlich Geschlecht = Geschlecht{Name: "männlich", ID: 19}
-var GeschlechtWEiblich Geschlecht = Geschlecht{Name: "weiblich", ID: 20}
+var GeschlechtWeiblich Geschlecht = Geschlecht{Name: "weiblich", ID: 20}

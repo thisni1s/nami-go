@@ -32,6 +32,8 @@ type SearchMemberAnswer struct {
 	genericSearchAnswer
 	Member Member `json:"data"`
 }
+
+// Kontoverbindung represents all payment related information a member can has.
 type Kontoverbindung struct {
 	ID                  int    `json:"id"`
 	Institut            string `json:"institut"`
@@ -41,65 +43,67 @@ type Kontoverbindung struct {
 	Bic                 string `json:"bic"`
 	Kontoinhaber        string `json:"kontoinhaber"`
 	MitgliedsNummer     int    `json:"mitgliedsNummer"`
-	ZahlungsKonditionID int    `json:"zahlungsKonditionId"`
-	ZahlungsKondition   string `json:"zahlungsKondition"`
+	ZahlungsKonditionID int    `json:"zahlungsKonditionId"` // ZahlungsKonditionID is either 1 or 2 depending on direct debit or sepa transaction. See also [thisni1s/nami-go/types/Zahlungskondition]
+	ZahlungsKondition   string `json:"zahlungsKondition"`   // ZahlungsKondition is either "Std Lastschrift" or "Std Überweisung". See also [thisni1s/nami-go/types/Zahlungskondition]
 }
+
+// Member represents all the information NAMI has about one Member
 type Member struct {
-	Jungpfadfinder               any             `json:"jungpfadfinder"`
-	MglType                      string          `json:"mglType"`
-	Geschlecht                   string          `json:"geschlecht"`
-	Staatsangehoerigkeit         string          `json:"staatsangehoerigkeit"`
-	ErsteTaetigkeitID            any             `json:"ersteTaetigkeitId"`
-	ErsteUntergliederung         string          `json:"ersteUntergliederung"`
-	EmailVertretungsberechtigter string          `json:"emailVertretungsberechtigter"`
-	LastUpdated                  string          `json:"lastUpdated"`
-	ErsteTaetigkeit              any             `json:"ersteTaetigkeit"`
+	ID                           int             `json:"id"`              // ID is the NAMI internal ID
+	MitgliedsNummer              int             `json:"mitgliedsNummer"` // MitgliedsNummer is the NAMI Mitgliedsnummer
+	Vorname                      string          `json:"vorname"`
+	Spitzname                    string          `json:"spitzname"`
+	Nachname                     string          `json:"nachname"`
 	NameZusatz                   string          `json:"nameZusatz"`
-	ID                           int             `json:"id"`
+	GeburtsDatum                 string          `json:"geburtsDatum"`
+	Geschlecht                   string          `json:"geschlecht"`   // Geschlecht and GeschlechtID can together form a Geschlecht object defined in types. [thisni1s/nami-go/types/Geschlecht]
+	GeschlechtID                 int             `json:"geschlechtId"` // GeschlechtID and Geschlecht can together form a Geschlecht object defined in types. [thisni1s/nami-go/types/Geschlecht]
+	Stufe                        string          `json:"stufe"`        // String containing the "Stufenname"
+	Strasse                      string          `json:"strasse"`
+	Ort                          string          `json:"ort"`
+	Plz                          string          `json:"plz"`
+	Beitragsart                  string          `json:"beitragsart"`   // Beitragsart and BeitragsartID can together form a Beitragsart object defined in types. [thisni1s/nami-go/types/Beitragsart]
+	BeitragsartID                int             `json:"beitragsartId"` // BeitragsartID and Beitragsart can together form a Beitragsart object defined in types. [thisni1s/nami-go/types/Beitragsart]
+	FixBeitrag                   any             `json:"fixBeitrag"`
+	Staatsangehoerigkeit         string          `json:"staatsangehoerigkeit"`
 	StaatsangehoerigkeitID       int             `json:"staatsangehoerigkeitId"`
+	StaatsangehoerigkeitText     string          `json:"staatsangehoerigkeitText"`
+	Land                         string          `json:"land"`
+	LandID                       int             `json:"landId"`
+	MglType                      string          `json:"mglType"` // MglType is either "MITGLIED" or "NICHTMITGLIED"
+	MglTypeID                    string          `json:"mglTypeId"`
+	Email                        string          `json:"email"`
+	EmailVertretungsberechtigter string          `json:"emailVertretungsberechtigter"`
+	ErsteTaetigkeit              any             `json:"ersteTaetigkeit"`        // ErsteTaetigkeit is usually not set
+	ErsteTaetigkeitID            any             `json:"ersteTaetigkeitId"`      // ErsteUntergliederungID is usually not set
+	ErsteUntergliederung         string          `json:"ersteUntergliederung"`   // ErsteUntergliederung is the "Stufe"
+	ErsteUntergliederungID       any             `json:"ersteUntergliederungId"` // ErsteUntergliederungID can have the values defined in [thisni1s/nami-go/types/UNTERGLIEDERUNG]
+	Gruppierung                  string          `json:"gruppierung"`            // Gruppierung contains the name of the "Stammgruppierung"
+	GruppierungID                int             `json:"gruppierungId"`          // GruppierungID is the internal ID of the "Stammgruppierung"
+	Eintrittsdatum               string          `json:"eintrittsdatum"`
+	AustrittsDatum               string          `json:"austrittsDatum"`
+	Region                       string          `json:"region"`   // Region is the Federal State
+	RegionID                     int             `json:"regionId"` // RegionID is the Federal State ID set by NAMI
+	Status                       string          `json:"status"`   // Status usually is "AKTIV"
+	Konfession                   string          `json:"konfession"`
+	KonfessionID                 int             `json:"konfessionId"`
+	Rover                        any             `json:"rover"`          // Rover is almost never set
+	Pfadfinder                   any             `json:"pfadfinder"`     // Pfadfinder is almost never set
+	Jungpfadfinder               any             `json:"jungpfadfinder"` // Jungpfadfinder is almost never set
+	Woelfling                    any             `json:"woelfling"`      // Woelfling is almost never set
+	Telefon1                     string          `json:"telefon1"`       // Telefon1 is the landline field in NAMI
+	Telefon2                     string          `json:"telefon2"`       // Telefon2 is the mobile field in NAMI
+	Telefon3                     string          `json:"telefon3"`       // Telefon3 is the business field in NAMI
+	Telefax                      string          `json:"telefax"`
+	Kontoverbindung              Kontoverbindung `json:"kontoverbindung"`
+	Zeitschriftenversand         bool            `json:"zeitschriftenversand"`
+	WiederverwendenFlag          bool            `json:"wiederverwendenFlag"`
+	GenericField1                string          `json:"genericField1"`
+	GenericField2                string          `json:"genericField2"`
+	LastUpdated                  string          `json:"lastUpdated"`
 	Version                      int             `json:"version"`
 	Sonst01                      bool            `json:"sonst01"`
 	Sonst02                      bool            `json:"sonst02"`
-	Spitzname                    string          `json:"spitzname"`
-	LandID                       int             `json:"landId"`
-	StaatsangehoerigkeitText     string          `json:"staatsangehoerigkeitText"`
-	GruppierungID                int             `json:"gruppierungId"`
-	MglTypeID                    string          `json:"mglTypeId"`
-	Beitragsart                  string          `json:"beitragsart"`
-	Nachname                     string          `json:"nachname"`
-	Eintrittsdatum               string          `json:"eintrittsdatum"`
-	Rover                        any             `json:"rover"`
-	Region                       string          `json:"region"`
-	Status                       string          `json:"status"`
-	Konfession                   string          `json:"konfession"`
-	FixBeitrag                   any             `json:"fixBeitrag"`
-	KonfessionID                 int             `json:"konfessionId"`
-	Zeitschriftenversand         bool            `json:"zeitschriftenversand"`
-	Pfadfinder                   any             `json:"pfadfinder"`
-	Telefon3                     string          `json:"telefon3"`
-	Kontoverbindung              Kontoverbindung `json:"kontoverbindung"`
-	GeschlechtID                 int             `json:"geschlechtId"`
-	Land                         string          `json:"land"`
-	Email                        string          `json:"email"`
-	Telefon1                     string          `json:"telefon1"`
-	Woelfling                    any             `json:"woelfling"`
-	Telefon2                     string          `json:"telefon2"`
-	Strasse                      string          `json:"strasse"`
-	Vorname                      string          `json:"vorname"`
-	MitgliedsNummer              int             `json:"mitgliedsNummer"`
-	Gruppierung                  string          `json:"gruppierung"`
-	AustrittsDatum               string          `json:"austrittsDatum"`
-	Ort                          string          `json:"ort"`
-	ErsteUntergliederungID       any             `json:"ersteUntergliederungId"`
-	WiederverwendenFlag          bool            `json:"wiederverwendenFlag"`
-	RegionID                     int             `json:"regionId"`
-	GeburtsDatum                 string          `json:"geburtsDatum"`
-	Stufe                        string          `json:"stufe"`
-	GenericField1                string          `json:"genericField1"`
-	GenericField2                string          `json:"genericField2"`
-	Telefax                      string          `json:"telefax"`
-	BeitragsartID                int             `json:"beitragsartId"`
-	Plz                          string          `json:"plz"`
 }
 
 type SearchAnswer struct {
@@ -107,45 +111,45 @@ type SearchAnswer struct {
 	Members []SearchMember `json:"data"`
 }
 type SearchMember struct {
-	TaetigkeitID                 any    `json:"entries_ersteTaetigkeitId"`
-	GenericField1                string `json:"entries_genericField1"`
-	Version                      int    `json:"entries_version"`
-	Telefon3                     string `json:"entries_telefon3"`
-	Telefon2                     string `json:"entries_telefon2"`
-	Telefon1                     string `json:"entries_telefon1"`
-	Descriptor                   string `json:"descriptor"`
-	EntriesID                    int    `json:"entries_id"`
-	Staatsangehoerigkeit         string `json:"entries_staatsangehoerigkeit"`
-	RepresentedClass             string `json:"representedClass"`
-	Rover                        string `json:"entries_rover"`
-	Pfadfinder                   string `json:"entries_pfadfinder"`
-	MitgliedsNummer              int    `json:"entries_mitgliedsNummer"`
-	WiederverwendenFlag          bool   `json:"entries_wiederverwendenFlag"`
-	ErsteUntergliederungID       any    `json:"entries_ersteUntergliederungId"`
-	RowCSSClass                  string `json:"entries_rowCssClass"`
+	ID                           int    `json:"id"`                      // ID is the NAMI internal ID
+	EntriesID                    int    `json:"entries_id"`              // EntriesID is the NAMI internal ID
+	MitgliedsNummer              int    `json:"entries_mitgliedsNummer"` // MitgliedsNummer is the NAMI Mitgliedsnummer
 	Vorname                      string `json:"entries_vorname"`
-	ID                           int    `json:"id"`
-	Woelfling                    string `json:"entries_woelfling"`
-	Beitragsarten                string `json:"entries_beitragsarten"`
-	Stufe                        string `json:"entries_stufe"`
-	Email                        string `json:"entries_email"`
-	Konfession                   string `json:"entries_konfession"`
-	FixBeitrag                   string `json:"entries_fixBeitrag"`
-	EmailVertretungsberechtigter string `json:"entries_emailVertretungsberechtigter"`
-	LastUpdated                  string `json:"entries_lastUpdated"`
-	Status                       string `json:"entries_status"`
-	Jungpfadfinder               string `json:"entries_jungpfadfinder"`
-	MglType                      string `json:"entries_mglType"`
-	Kontoverbindung              string `json:"entries_kontoverbindung"`
-	Geschlecht                   string `json:"entries_geschlecht"`
+	Nachname                     string `json:"entries_nachname"`
 	Spitzname                    string `json:"entries_spitzname"`
 	GeburtsDatum                 string `json:"entries_geburtsDatum"`
-	StaatangehoerigkeitText      string `json:"entries_staatangehoerigkeitText"`
-	Nachname                     string `json:"entries_nachname"`
+	Stufe                        string `json:"entries_stufe"`    // Stufe is the current "Stufe"
+	Telefon1                     string `json:"entries_telefon1"` // Telefon1 is the landline field in NAMI
+	Telefon2                     string `json:"entries_telefon2"` // Telefon2 is the mobile field in NAMI
+	Telefon3                     string `json:"entries_telefon3"` // Telefon3 is the business field in NAMI
+	Telefax                      string `json:"entries_telefax"`
+	Staatsangehoerigkeit         string `json:"entries_staatsangehoerigkeit"`
+	StaatangehoerigkeitText      string `json:"entries_staatangehoerigkeitText"` // StaatangehoerigkeitText is usually null
+	TaetigkeitID                 any    `json:"entries_ersteTaetigkeitId"`       // TaetigkeitID is usually null
+	ErsteUntergliederungID       any    `json:"entries_ersteUntergliederungId"`  // ErsteUntergliederungID is always null
+	Beitragsarten                string `json:"entries_beitragsarten"`           // Beitragsarten is usually null
+	Email                        string `json:"entries_email"`
+	EmailVertretungsberechtigter string `json:"entries_emailVertretungsberechtigter"`
+	Konfession                   string `json:"entries_konfession"`
+	FixBeitrag                   string `json:"entries_fixBeitrag"`
+	Status                       string `json:"entries_status"`  // Status is usually "AKTIV"
+	MglType                      string `json:"entries_mglType"` // MglType is either "MITGLIED" or "NICHTMITGLIED"
+	Geschlecht                   string `json:"entries_geschlecht"`
 	Eintrittsdatum               string `json:"entries_eintrittsdatum"`
 	AustrittsDatum               string `json:"entries_austrittsDatum"`
+	Kontoverbindung              string `json:"entries_kontoverbindung"` // Kontoverbindung always null
+	WiederverwendenFlag          bool   `json:"entries_wiederverwendenFlag"`
+	Rover                        string `json:"entries_rover"`          // Rover is always null
+	Pfadfinder                   string `json:"entries_pfadfinder"`     // Pfadfinder is always null
+	Jungpfadfinder               string `json:"entries_jungpfadfinder"` // Jungpfadfinder is always null
+	Woelfling                    string `json:"entries_woelfling"`      // Woelfling is always null
+	LastUpdated                  string `json:"entries_lastUpdated"`
+	Descriptor                   string `json:"descriptor"` // Descriptor usually is "Nachname, Vorname"
+	GenericField1                string `json:"entries_genericField1"`
 	GenericField2                string `json:"entries_genericField2"`
-	Telefax                      string `json:"entries_telefax"`
+	RepresentedClass             string `json:"representedClass"`
+	RowCSSClass                  string `json:"entries_rowCssClass"`
+	Version                      int    `json:"entries_version"`
 }
 
 type SearchValues struct {
