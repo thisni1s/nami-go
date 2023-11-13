@@ -9,7 +9,4 @@ const MEMBER_ACTIVITIES_URL string = "https://nami.dpsg.de/ica/rest/nami/zugeord
 const MEMBER_EDUCATION_URL string = "https://nami.dpsg.de/ica/rest/nami/mitglied-ausbildung/filtered-for-navigation/mitglied/mitglied/"
 const TAG_URL string = "https://nami.dpsg.de/ica/rest/nami/mitglied-tagged-item/filtered-for-navigation/identitaet/identitaet/"
 const GROUP_TAG_URL string = "https://nami.dpsg.de/ica/rest/tagging/"
-
-func FillMemberUrl(userid string, groupid string) string {
-	return (MEMBER_URL + groupid + "/" + userid)
-}
+const LOGOUT_URL string = "https://nami.dpsg.de/ica/rest/nami/auth/logout"

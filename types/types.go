@@ -304,3 +304,15 @@ type GroupTag struct {
 	OwnerGruppierung   string `json:"ownerGruppierung,omitempty"`
 	OwnerGruppierungID int    `json:"ownerGruppierungId,omitempty"`
 }
+
+type GroupInfoAnswer struct {
+	Success      bool        `json:"success,omitempty"`
+	Group        []GroupInfo `json:"data,omitempty"`
+	ResponseType string      `json:"responseType,omitempty"`
+}
+type GroupInfo struct {
+	Descriptor       string `json:"descriptor,omitempty"`
+	Name             string `json:"name,omitempty"`
+	RepresentedClass string `json:"representedClass,omitempty"`
+	ID               int    `json:"id,omitempty"`
+}
