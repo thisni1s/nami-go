@@ -216,20 +216,46 @@ type ActivityListItem struct {
 }
 
 type Activity struct {
-	ID            int        `json:"id,omitempty"`
-	Gruppierung   string     `json:"gruppierung,omitempty"`
-	GruppierungID int        `json:"gruppierungId,omitempty"`
-	Taetigkeit    string     `json:"taetigkeit,omitempty"`
-	TaetigkeitID  TAETIGKEIT `json:"taetigkeitId,omitempty"`
-	CaeaGroup     string     `json:"caeaGroup,omitempty"`
-	CaeaGroupID   int        `json:"caeaGroupId,omitempty"`
-	AktivVon      string     `json:"aktivVon,omitempty"`
-	AktivBis      string     `json:"aktivBis,omitempty"`
+	ID                int     `json:"id,omitempty"`
+	Gruppierung       string  `json:"gruppierung"`   // Gruppierung is mandatory for updates!
+	GruppierungID     int     `json:"gruppierungId"` // GruppierungID is mandatory for updates!
+	Taetigkeit        string  `json:"taetigkeit,omitempty"`
+	TaetigkeitID      int     `json:"taetigkeitId"` // TaetigkeitID is mandatory for updates!
+	CaeaGroup         string  `json:"caeaGroup,omitempty"`
+	CaeaGroupID       *int    `json:"caeaGroupId"`
+	AktivVon          string  `json:"aktivVon"` // AktivVon is mandatory for updates!
+	AktivBis          string  `json:"aktivBis"`
+	BeitragsartId     *string `json:"beitragsArtId"`     // BeitragsartId is only used when updating an Activity, not when getting it!
+	GroupForID        *string `json:"caeaGroupForGfId"`  // GroupForID is only used when updating an Activity, not when getting it!
+	UntergliederungID *string `json:"untergliederungId"` // UntergliederungID is only used when updating an Activity, not when getting it!
+}
+
+func (act *Activity) Verify() bool {
+	switch "" {
+	case act.AktivVon:
+		return false
+	case act.AktivBis:
+		return false
+	case act.Gruppierung:
+		return false
+	}
+	switch 0 {
+	case act.GruppierungID:
+		return false
+	case act.TaetigkeitID:
+		return false
+	}
+	return true
 }
 
 type ActivityAnswer struct {
 	genericSingleAnswer
 	Act Activity `json:"data,omitempty"`
+}
+
+type UpdateActivityAnswer struct {
+	genericSingleAnswer
+	ID int `json:"data"`
 }
 
 type EducationsAnswer struct {

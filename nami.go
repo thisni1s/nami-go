@@ -3,15 +3,17 @@
 package namigo
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/thisni1s/nami-go/types"
 	"io"
 	"log"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+
+	"github.com/thisni1s/nami-go/types"
 )
 
 func errchck(err *error) {
@@ -89,6 +91,30 @@ func GetActivityById(userid string, activityId string) (types.Activity, error) {
 	defer response.Body.Close()
 	error = json.NewDecoder(response.Body).Decode(&answer)
 	return answer.Act, error
+}
+
+func UpdateMemberActivities(userid string, activity types.Activity) (int, error) {
+    var answer types.UpdateActivityAnswer
+    if !activity.Verify() {
+        return answer.ID, errors.New("ERROR: Must set at least the following fields when updating an Activity: AktivVon, AktivBis, Gruppierung, GruppierungID and TaestigkeitID")
+    }
+    payload, error := json.Marshal(activity)
+    if error != nil {
+        return answer.ID, error
+    }
+    request, error := http.NewRequest(http.MethodPost, fmt.Sprintf("%s%s", types.MEMBER_ACTIVITIES_URL, userid), bytes.NewBuffer(payload))
+    request.Header.Set("Content-Type", "application/json")
+    fmt.Println(request)
+    if error != nil {
+        return answer.ID, error
+    }
+    response, error := client.Do(request)
+    if error != nil {
+        return answer.ID, error
+    }
+    defer response.Body.Close()
+    error = json.NewDecoder(response.Body).Decode(&answer)
+    return answer.ID, error
 }
 
 // GetMemberEducation returns a slice containing all "Ausbildung" entries of a Member 
