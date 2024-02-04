@@ -8,6 +8,9 @@ It also provides a lot of structs to work with the NAMI data.
 
 ## Usage
 
+Call ```Login("username", "password")``` to login to the NAMI. Then use the other functions to get data from it. 
+
+
 #### func  GetActivityById
 
 ```go
