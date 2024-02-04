@@ -64,7 +64,7 @@ type Member struct {
 	Plz                          string          `json:"plz"`
 	Beitragsart                  string          `json:"beitragsart"`   // Beitragsart and BeitragsartID can together form a Beitragsart object defined in types. [thisni1s/nami-go/types/Beitragsart]
 	BeitragsartID                int             `json:"beitragsartId"` // BeitragsartID and Beitragsart can together form a Beitragsart object defined in types. [thisni1s/nami-go/types/Beitragsart]
-	FixBeitrag                   any             `json:"fixBeitrag"`
+	FixBeitrag                   float64         `json:"fixBeitrag"`    // FixBeitrag is never set? But can be abused to store extra information!
 	Staatsangehoerigkeit         string          `json:"staatsangehoerigkeit"`
 	StaatsangehoerigkeitID       int             `json:"staatsangehoerigkeitId"`
 	StaatsangehoerigkeitText     string          `json:"staatsangehoerigkeitText"`
