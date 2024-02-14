@@ -160,7 +160,7 @@ type SearchValues struct {
 	City                 string           `json:"mglWohnort,omitempty"`
 	Mitgliedsnummer      string           `json:"mitgliedsNummber,omitempty"`
 	MglStatusID          MITGLIEDSTATUSID `json:"mglStatusId,omitempty"`
-	MglTypeID            []MITGLIEDTYPEID `json:"mglTypeId,omitempty"`
+	MglTypeID            MITGLIEDTYPEID   `json:"mglTypeId,omitempty"`
 	TagID                string           `json:"tagId,omitempty"`
 	Zeitschriftenversand bool             `json:"zeitschriftenversand,omitempty"`
 	UntergliederungID    UNTERGLIEDERUNG  `json:"untergliederungId,omitempty"`
