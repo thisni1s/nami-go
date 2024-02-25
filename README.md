@@ -1,11 +1,15 @@
-# namigo
---
-    import "github.com/thisni1s/nami-go"
+# NaMi-Go
+```go
+import "github.com/thisni1s/nami-go"
+```
 
 Package namigo provides a basic read-only implemaentation of the DPSG NAMI API.
 It also provides a lot of structs to work with the NAMI data.
 
 ## Usage
+
+Call ```Login("username", "password")``` to login to the NAMI. Then use the other functions to get data from it. 
+
 
 #### func  GetActivityById
 
